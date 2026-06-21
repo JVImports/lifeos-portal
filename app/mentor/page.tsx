@@ -62,6 +62,12 @@ export default function MentorChat() {
       } else if (cmd.includes("habito") || cmd.includes("hábito")) {
         const completed = habits.filter(h => h.completed).length;
         responseText = `Verificando sua consistência de hábitos... Você concluiu ${completed} de ${habits.length} hábitos hoje. Seu maior streak atual é de ${Math.max(...habits.map(h => h.streak), 0)} dias. Continue firme no check-in!`;
+      } else if (cmd.includes("rotina") || cmd.includes("acordar")) {
+        responseText = "Para estruturar uma rotina de alto impacto matinal (como acordar às 6h), recomendo ativar o 'Protocolo Rotina Matinal' na aba de Protocolos. Ele injetará os hábitos iniciais de hidratação e alongamento no seu dia.";
+      } else if (cmd.includes("semana") || cmd.includes("organizar")) {
+        responseText = "Analisando seus compromissos... Para organizar sua semana, comece cadastrando suas metas em 'Metas e OKRs' e divida-as em subtarefas no painel de Atividades. Quer que eu sugira metas prioritárias para o seu foco?";
+      } else if (cmd.includes("revisar") || cmd.includes("revisão") || cmd.includes("revisao")) {
+        responseText = "Excelente iniciativa. Você pode fechar o seu dia e auditar sua consistência agora mesmo acessando nossa página de 'Revisão Diária'. Ela ajudará a recalibrar suas tarefas pendentes para amanhã.";
       } else {
         responseText = `Compreendo. Como seu mentor Aether, recomendo focar na execução prática do seu dia. Você possui ${tasks.filter(t => t.status !== "Concluído").length} atividades pendentes na aba Atividades. Quer que eu ajude a organizar os horários delas?`;
       }

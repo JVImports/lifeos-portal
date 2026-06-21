@@ -1,16 +1,33 @@
 "use client";
 
 import { useState } from "react";
-import { Plus, ChevronLeft, ChevronRight, Check, Trash } from "lucide-react";
+import { Plus, ChevronLeft, ChevronRight, Check, Trash, Sparkles } from "lucide-react";
 import { useLifeOS, Task } from "@/context/lifeos-context";
 
 export default function Atividades() {
-  const { tasks, addTask, deleteTask, moveTask } = useLifeOS();
+  const { tasks, addTask, deleteTask, moveTask, gainXp } = useLifeOS();
 
   const [newTitle, setNewTitle] = useState("");
   const [newPriority, setNewPriority] = useState<"Baixa" | "Média" | "Alta">("Média");
   const [newStatus, setNewStatus] = useState<Task["status"]>("A Fazer");
   const [isAdding, setIsAdding] = useState(false);
+
+  // IA Reschedule States
+  const [isRescheduling, setIsRescheduling] = useState(false);
+  const [rescheduleMessage, setRescheduleMessage] = useState("");
+
+  const handleAIReschedule = () => {
+    setIsRescheduling(true);
+    setRescheduleMessage("Analisando prazos das tarefas pendentes...");
+    setTimeout(() => {
+      setRescheduleMessage("Ajustando carga de tarefas...");
+      setTimeout(() => {
+        gainXp(10);
+        setIsRescheduling(false);
+        alert("A IA Aether reorganizou sua carga diária com sucesso! +10 XP");
+      }, 1000);
+    }, 1000);
+  };
 
   const handleMoveTask = (id: number, currentStatus: Task["status"], direction: "prev" | "next") => {
     let nextStatus: Task["status"] = currentStatus;
@@ -37,18 +54,27 @@ export default function Atividades() {
 
   return (
     <main className="p-6 md:p-10 min-h-screen">
-      <header className="flex items-center justify-between gap-4 mb-8">
+      <header className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
         <div>
           <h1 className="text-3xl md:text-4xl font-bold tracking-tight text-on-surface">Atividades</h1>
           <p className="text-sm opacity-60 mt-1">Gerencie suas tarefas através do painel Kanban</p>
         </div>
-        <button 
-          onClick={() => setIsAdding(true)}
-          className="flex items-center gap-2 px-5 py-3 bg-[#adc6ff] text-[#002e6a] rounded-xl text-sm font-semibold shadow-lg shadow-[#adc6ff]/10 hover:scale-[1.02] active:scale-[0.98] transition-all"
-        >
-          <Plus className="w-4 h-4" />
-          Adicionar Tarefa
-        </button>
+        <div className="flex flex-wrap items-center gap-3">
+          <button 
+            onClick={handleAIReschedule}
+            className="flex items-center gap-2 px-5 py-3 bg-[#8b5cf6]/10 hover:bg-[#8b5cf6]/20 text-[#8b5cf6] border border-[#8b5cf6]/35 rounded-xl text-sm font-semibold hover:scale-[1.02] active:scale-[0.98] transition-all"
+          >
+            <Sparkles className="w-4 h-4" />
+            Replanejar com IA
+          </button>
+          <button 
+            onClick={() => setIsAdding(true)}
+            className="flex items-center gap-2 px-5 py-3 bg-[#adc6ff] text-[#002e6a] rounded-xl text-sm font-semibold shadow-lg shadow-[#adc6ff]/10 hover:scale-[1.02] active:scale-[0.98] transition-all"
+          >
+            <Plus className="w-4 h-4" />
+            Adicionar Tarefa
+          </button>
+        </div>
       </header>
 
       {isAdding && (
@@ -156,6 +182,15 @@ export default function Atividades() {
           );
         })}
       </div>
+      {isRescheduling && (
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="glass-card max-w-md w-full rounded-3xl border border-white/10 p-6 flex flex-col gap-4 text-center bg-[#1d2027]">
+            <div className="w-10 h-10 border-4 border-[#8b5cf6] border-t-transparent rounded-full animate-spin mx-auto"></div>
+            <h4 className="font-bold text-on-surface">Replanejamento Inteligente</h4>
+            <p className="text-xs text-on-surface-variant font-mono">{rescheduleMessage}</p>
+          </div>
+        </div>
+      )}
     </main>
   );
 }

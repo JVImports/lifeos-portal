@@ -104,6 +104,13 @@ export default function Dashboard() {
 
         {/* Quick Actions Panel */}
         <div className="flex flex-wrap items-center gap-3">
+          <Link 
+            href="/revisao-diaria"
+            className="flex items-center gap-2 px-5 py-3 bg-[#8b5cf6] text-white rounded-xl text-sm font-semibold shadow-lg shadow-[#8b5cf6]/10 hover:scale-[1.03] active:scale-[0.97] transition-all"
+          >
+            <Sparkles className="w-4 h-4" />
+            Finalizar Dia
+          </Link>
           <button 
             onClick={() => setActiveModal("task")}
             className="flex items-center gap-2 px-5 py-3 bg-[#adc6ff] text-[#002e6a] rounded-xl text-sm font-semibold shadow-lg shadow-[#adc6ff]/10 hover:scale-[1.03] active:scale-[0.97] transition-all"
