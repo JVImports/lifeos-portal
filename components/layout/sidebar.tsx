@@ -14,7 +14,9 @@ import {
   LogOut,
   BrainCircuit,
   Compass,
-  FileQuestion
+  FileQuestion,
+  Map,
+  Moon
 } from "lucide-react";
 import { useLifeOS } from "@/context/lifeos-context";
 
@@ -29,6 +31,8 @@ export default function Sidebar() {
     { name: "Dashboard", href: "/", icon: LayoutDashboard },
     { name: "Mentor Aether", href: "/mentor", icon: BrainCircuit },
     { name: "Protocolos", href: "/protocolos", icon: Compass },
+    { name: "Mapa da Trilha", href: "/trilha", icon: Map },
+    { name: "Revisão Diária", href: "/revisao-diaria", icon: Moon },
     { name: "Atividades", href: "/atividades", icon: CheckSquare },
     { name: "Finanças", href: "/financas", icon: Wallet },
     { name: "Hábitos", href: "/habitos", icon: Sparkles },

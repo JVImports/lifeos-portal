@@ -1,12 +1,8 @@
-# Tarefas — Evolução do Portal LifeOS (Benchmark Trilha.IA)
+# Checklist de Tarefas — Evolução Trilha.IA
 
-- [x] Criar Provedor de Estado Global (`context/lifeos-context.tsx`) para unificar tarefas, hábitos, finanças, XP e protocolos
-- [x] Configurar Layout Raiz (`app/layout.tsx`) com o Provedor global
-- [x] Atualizar a Barra Lateral (`components/layout/sidebar.tsx`) com a barra de progresso de Nível/XP e novas rotas
-- [x] Atualizar Dashboard Principal (`app/page.tsx`) com o banner de insights da IA e integração ao estado global
-- [x] Acoplar Atividades (`app/atividades/page.tsx`) e Finanças (`app/financas/page.tsx`) ao contexto unificado
-- [x] Criar página detalhada de Hábitos (`app/habitos/page.tsx`) com streaks gamificadas
-- [x] Criar página de Onboarding Diagnóstico (`app/onboarding/page.tsx`) que gera perfis técnicos e adiciona XP
-- [x] Criar chat interativo do Mentor Aether (`app/mentor/page.tsx`) com respostas a comandos
-- [x] Criar painel de Protocolos de Evolução (`app/protocolos/page.tsx`) que injetam hábitos e tarefas dinâmicas na rotina
-- [x] Sincronizar todos os arquivos de configuração e código fonte com o repositório GitHub
+- [x] Integrar novas funções ao Contexto (`context/lifeos-context.tsx`)
+- [x] Implementar fluxo de Revisão Diária (`app/revisao-diaria/page.tsx`)
+- [x] Implementar Mapa de Evolução / Trilha (`app/trilha/page.tsx`)
+- [x] Atualizar Finanças com Open Finance simulado (`app/financas/page.tsx`)
+- [x] Atualizar menu lateral (`components/layout/sidebar.tsx`)
+- [x] Puxar todas as mudanças para o GitHub

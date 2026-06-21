@@ -66,6 +66,8 @@ interface LifeOSContextType {
   activateProtocol: (id: string) => void;
   deactivateProtocol: () => void;
   gainXp: (amount: number) => void;
+  connectOpenFinance: (bank: string) => void;
+  completeDailyReview: (tomorrowTasks: string[]) => void;
 }
 
 const LifeOSContext = createContext<LifeOSContextType | undefined>(undefined);
@@ -211,6 +213,27 @@ export function LifeOSProvider({ children }: { children: React.ReactNode }) {
     setActiveProtocol(null);
   };
 
+  const connectOpenFinance = (bank: string) => {
+    setExpenses((prev) => [
+      { id: Date.now() + 1, description: `${bank}: Transferência Recebida`, amount: 1200.00, category: "Outros", type: "Receita", date: new Date().toISOString().split("T")[0] },
+      { id: Date.now() + 2, description: `${bank}: Uber Trip`, amount: 32.50, category: "Transporte", type: "Despesa", date: new Date().toISOString().split("T")[0] },
+      { id: Date.now() + 3, description: `${bank}: Spotify Premium`, amount: 21.90, category: "Assinaturas", type: "Despesa", date: new Date().toISOString().split("T")[0] },
+      ...prev,
+    ]);
+    gainXp(50);
+  };
+
+  const completeDailyReview = (tomorrowTasks: string[]) => {
+    tomorrowTasks.forEach((title) => {
+      if (title.trim()) {
+        addTask(title, "Média", "A Fazer");
+      }
+    });
+
+    setHabits((prev) => prev.map((h) => ({ ...h, completed: false })));
+    gainXp(80);
+  };
+
   return (
     <LifeOSContext.Provider
       value={{
@@ -234,6 +257,8 @@ export function LifeOSProvider({ children }: { children: React.ReactNode }) {
         activateProtocol,
         deactivateProtocol,
         gainXp,
+        connectOpenFinance,
+        completeDailyReview,
       }}
     >
       {children}

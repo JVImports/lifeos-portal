@@ -24,6 +24,15 @@ Implementamos uma evolução profunda no **LifeOS**, integrando toda a aplicaç�
    * Possibilidade de ativar 3 trilhas estruturadas (*Foco Profundo*, *Rotina Matinal* ou *Organização Financeira*).
    * Ativar um protocolo injeta imediatamente hábitos e tarefas específicas na rotina diária do usuário.
 
+6. **Revisão Diária ([app/revisao-diaria/page.tsx](file:///c:/Users/joao.tamanqueira/Documents/Projeto%20App%20de%2520Produtividade/app/revisao-diaria/page.tsx)):**
+   * Fluxo interativo de fechamento do dia com auditoria de pendências, análise contextual do mentor Aether e definição de metas para o dia seguinte.
+
+7. **Mapa da Trilha ([app/trilha/page.tsx](file:///c:/Users/joao.tamanqueira/Documents/Projeto%20App%20de%2520Produtividade/app/trilha/page.tsx)):**
+   * Mapa visual (árvore de conquistas) que destrava novos marcos de evolução de acordo com o nível atual do usuário.
+
+8. **Simulador de Open Finance ([app/financas/page.tsx](file:///c:/Users/joao.tamanqueira/Documents/Projeto%20App%20de%2520Produtividade/app/financas/page.tsx)):**
+   * Integração simulada com grandes bancos para importação de lançamentos e distribuição automática de XP.
+
 ## Sincronização com o GitHub
 
 Todos os arquivos do projeto foram sincronizados com sucesso no repositório [JVImports/lifeos-portal](https://github.com/JVImports/lifeos-portal) na branch `main`:
