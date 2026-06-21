@@ -1,0 +1,511 @@
+Consegui entender bem a proposta funcional, mas com uma ressalva: a página pública é uma landing page e não expõe a área logada completa. Então abaixo eu separo o que está mais evidente do que é inferência de produto.
+
+Pelo material público, o Trilha.IA parece ser um sistema de produtividade pessoal com IA, unindo rotina, metas, hábitos, finanças e acompanhamento diário. A própria página posiciona o produto como “produtividade, finanças e rotina com IA” (trilha-ia.com) e a landing page indexada fala em assistente de IA Atlas, gestão financeira inteligente, rastreamento de hábitos gamificado e protocolos personalizados (lp.trilha-ia.com). Também há indícios de login/criação de conta e integração Google/OAuth, já que o site oficial mostra “Create my account” e links de privacidade, termos e divulgação Google OAuth (trilha-ia.com).
+
+## Entendimento do app
+
+O Trilha.IA não parece ser só um app de tarefas. Ele parece funcionar como um “sistema operacional pessoal”, onde o usuário informa sua vida, objetivos e rotina, e a IA transforma isso em um plano diário executável.
+
+A lógica central seria:
+
+1. O usuário entra no app e cria uma conta
+Provavelmente com login tradicional ou Google OAuth. Depois disso, passa por uma etapa inicial de configuração.
+
+2. Onboarding inteligente
+O app deve perguntar coisas como:
+
+“Qual seu principal objetivo?”
+“Como está sua rotina hoje?”
+“Quais áreas você quer melhorar?”
+“Qual seu horário de acordar/dormir?”
+“Quais hábitos deseja construir?”
+“Qual sua situação financeira?”
+“Quais metas quer alcançar?”
+
+Com isso, a IA monta um diagnóstico inicial.
+
+3. Mentor de IA chamado Atlas
+O Atlas parece ser o núcleo do app. A comunicação pública fala que o sistema é “orientado por Atlas, o Mentor da Trilha IA para organizar sua rotina” (Instagram). Então ele provavelmente atua como um assistente conversacional que transforma objetivos em tarefas, missões, protocolos e alertas.
+
+4. Missões diárias / rotina do dia
+A proposta mais forte é transformar intenção em execução diária. Um post público diz que o Trilha.IA “cria sua rotina, cobra execução e não deixa você desistir”, com o Atlas montando “missões diárias” baseadas no usuário (Facebook). Então a tela principal deve mostrar algo como:
+
+“Bom dia, João”
+“Seu plano de hoje”
+“Missões prioritárias”
+“Hábitos do dia”
+“Resumo financeiro”
+“Mensagem do Atlas”
+“Progresso da trilha”
+
+5. Hábitos gamificados
+A landing page fala em rastreamento de hábitos gamificado (lp.trilha-ia.com). Isso indica check-ins diários, streaks, XP, níveis, medalhas, ranking pessoal ou barra de evolução.
+
+6. Finanças inteligentes
+O app parece ter um módulo financeiro relevante, não apenas uma anotação simples. Há materiais públicos citando conexão de contas via Open Finance, categorização automática e categorias como viagem, transporte, alimentação, saúde e moradia (Instagram). Então o app provavelmente importa transações, categoriza despesas e gera alertas/insights.
+
+7. Protocolos personalizados
+Esse ponto é importante. “Protocolos” provavelmente são planos prontos ou gerados por IA para situações específicas, por exemplo:
+
+“Protocolo para acordar cedo”
+“Protocolo para organizar a semana”
+“Protocolo para sair das dívidas”
+“Protocolo foco total por 7 dias”
+“Protocolo de treino/estudo/sono”
+
+Ou seja, não é só cadastrar hábito; a IA cria um plano estruturado.
+
+---
+
+# Telas prováveis do app
+
+## 1. Tela de login / cadastro
+
+Função: entrada do usuário.
+
+Elementos:
+
+Nome do app
+Frase de posicionamento
+Botão “Entrar com Google”
+Botão “Criar conta”
+Termos de uso e privacidade
+Possível chamada: “Comece sua trilha”
+
+---
+
+## 2. Onboarding / diagnóstico inicial
+
+Essa é uma das telas mais importantes.
+
+Campos sugeridos:
+
+Nome
+Idade opcional
+Área de foco principal: produtividade, finanças, saúde, estudos, carreira, rotina
+Objetivo principal
+Rotina atual
+Horário de acordar
+Horário de dormir
+Dificuldade principal
+Nível de disciplina atual
+Metas financeiras
+Hábitos desejados
+Hábitos ruins a eliminar
+Preferência de cobrança: leve, normal, intensa
+
+Resultado esperado:
+
+A IA gera um “perfil de execução” do usuário.
+
+Exemplo:
+
+“Você tem perfil de execução inconsistente, com maior risco de falha no período da noite. Sua primeira trilha será focada em rotina matinal, organização financeira e redução de distrações.”
+
+---
+
+## 3. Dashboard principal
+
+Essa seria a tela central.
+
+Componentes:
+
+Card de saudação
+Progresso do dia
+Missões de hoje
+Hábitos de hoje
+Resumo financeiro
+Meta principal
+Insight do Atlas
+Botão rápido para conversar com IA
+Botão “planejar meu dia”
+Botão “finalizar dia”
+
+Exemplo de layout:
+
+“Bom dia, João. Hoje sua trilha tem 5 missões.”
+
+Cards:
+
+Missões concluídas: 2/5
+Hábitos concluídos: 3/6
+Saldo do mês
+Gastos da semana
+Sequência atual: 7 dias
+Nível: Explorador II
+
+---
+
+## 4. Tela do Atlas, mentor de IA
+
+Essa tela funciona como chat, mas não deve ser só um chatbot solto.
+
+O Atlas deve ter ações práticas:
+
+Criar rotina
+Reorganizar agenda
+Criar protocolo
+Analisar finanças
+Sugerir hábitos
+Cobrar execução
+Fazer revisão do dia
+Gerar plano semanal
+Explicar por que o usuário está falhando
+
+Exemplo de comandos:
+
+“Atlas, organize minha semana.”
+“Atlas, crie uma rotina para eu acordar às 6h.”
+“Atlas, onde estou gastando demais?”
+“Atlas, me dê uma missão para hoje.”
+“Atlas, revise meu dia.”
+
+---
+
+## 5. Tela de rotina / planner
+
+Aqui o usuário vê o dia dividido em blocos.
+
+Componentes:
+
+Linha do tempo do dia
+Tarefas por horário
+Missões principais
+Tarefas rápidas
+Tarefas recorrentes
+Prioridade alta/média/baixa
+Status: pendente, em andamento, concluída, ignorada
+
+Importante: a IA deve conseguir reorganizar o dia quando o usuário atrasa.
+
+Exemplo:
+
+“Você atrasou 2 tarefas. Quer que o Atlas reprograme o restante do dia?”
+
+---
+
+## 6. Tela de hábitos
+
+Funcionalidade:
+
+Criar hábito
+Definir frequência
+Marcar conclusão
+Ver sequência
+Ganhar XP
+Perder sequência se falhar
+Ver calendário de consistência
+Ver gráfico de evolução
+Associação de hábitos a metas
+
+Campos:
+
+Nome do hábito
+Categoria
+Frequência
+Horário ideal
+Dificuldade
+Motivo do hábito
+Recompensa
+Penalidade opcional
+
+Exemplo:
+
+Hábito: “Ler 10 páginas”
+Frequência: segunda a sexta
+Horário: 21h
+XP: +15
+Sequência atual: 12 dias
+
+---
+
+## 7. Tela de finanças
+
+Essa tela pode ser simples no MVP, mas a proposta do Trilha.IA parece caminhar para algo mais avançado, com Open Finance e categorização automática.
+
+Funcionalidades:
+
+Cadastrar receita
+Cadastrar despesa
+Importar transações
+Categorizar automaticamente
+Ver gastos por categoria
+Definir orçamento mensal
+Alertas de excesso
+Metas financeiras
+Insights da IA
+
+Cards:
+
+Saldo atual
+Receitas do mês
+Despesas do mês
+Maior categoria de gasto
+Gasto invisível detectado
+Meta de economia
+Previsão até fim do mês
+
+Exemplo de insight:
+
+“Você gastou 32% a mais com alimentação fora de casa nesta semana. Se mantiver esse ritmo, ultrapassará seu orçamento em R$ 420.”
+
+---
+
+## 8. Tela de metas
+
+Metas são objetivos maiores que viram trilhas.
+
+Exemplos:
+
+“Juntar R$ 10.000”
+“Estudar inglês todos os dias”
+“Criar um negócio online”
+“Emagrecer 5kg”
+“Dormir melhor”
+“Lançar um app”
+
+Cada meta deve ter:
+
+Nome
+Prazo
+Motivação
+Indicador de progresso
+Subtarefas
+Hábitos vinculados
+Missões geradas pela IA
+Risco de atraso
+Próxima ação recomendada
+
+---
+
+## 9. Tela de protocolos
+
+Essa tela pode ser o diferencial.
+
+Protocolos são planos guiados.
+
+Exemplos:
+
+Protocolo “Semana Produtiva”
+Protocolo “Controle Financeiro em 7 dias”
+Protocolo “Rotina Matinal”
+Protocolo “Sono e Energia”
+Protocolo “Foco Profundo”
+Protocolo “Anti-Procrastinação”
+
+Cada protocolo teria:
+
+Objetivo
+Duração
+Checklist diário
+Instruções
+Hábitos vinculados
+Missões automáticas
+Acompanhamento do Atlas
+
+---
+
+## 10. Tela de evolução / gamificação
+
+Componentes:
+
+XP total
+Nível atual
+Conquistas
+Sequência de dias
+Mapa da trilha
+Gráfico de consistência
+Histórico de missões
+Áreas mais fortes/fracas
+
+Exemplo:
+
+Produtividade: 72%
+Finanças: 48%
+Hábitos: 81%
+Sono: 55%
+Foco: 63%
+
+---
+
+# Funcionamento interno recomendado para uma plataforma semelhante
+
+A IA não deve apenas responder mensagens. Ela precisa operar como um motor de decisão da rotina.
+
+A estrutura ideal seria:
+
+Usuário preenche dados → IA cria diagnóstico → IA gera plano → sistema transforma plano em tarefas/hábitos/metas → usuário executa → sistema coleta progresso → IA ajusta o plano.
+
+O ciclo é:
+
+Diagnosticar → Planejar → Executar → Cobrar → Medir → Ajustar
+
+Esse ciclo é o que diferencia uma plataforma de produtividade com IA de um simples app de checklist.
+
+---
+
+# Prompt pronto para instruir uma IA desenvolvedora
+
+Você pode usar este prompt no Antigravity, Cursor, Lovable, AI Studio ou ferramenta semelhante:
+
+```text
+Desenvolva uma plataforma web/mobile de produtividade pessoal com IA, inspirada conceitualmente em apps de rotina inteligente como Trilha.IA, mas com identidade própria.
+
+A plataforma deve funcionar como um sistema operacional pessoal para o usuário organizar rotina, tarefas, hábitos, metas e finanças com apoio de um mentor de IA.
+
+Objetivo do produto:
+Criar um app que transforme objetivos pessoais em missões diárias executáveis. A IA deve diagnosticar a situação do usuário, criar planos personalizados, acompanhar execução, cobrar progresso e ajustar a rotina conforme o comportamento real do usuário.
+
+Módulos principais:
+
+1. Autenticação
+- Login com e-mail/senha.
+- Login com Google OAuth.
+- Recuperação de senha.
+- Perfil do usuário.
+
+2. Onboarding inteligente
+Criar um fluxo inicial com perguntas:
+- Nome do usuário.
+- Principal área de foco: produtividade, finanças, saúde, estudos, carreira, hábitos ou rotina.
+- Objetivo principal.
+- Principais dificuldades atuais.
+- Horário de acordar e dormir.
+- Rotina atual.
+- Hábitos que deseja criar.
+- Hábitos que deseja eliminar.
+- Metas financeiras.
+- Nível de disciplina atual.
+- Tom de cobrança desejado: leve, equilibrado ou intenso.
+
+Ao final, a IA deve gerar:
+- Diagnóstico inicial.
+- Perfil de execução do usuário.
+- Primeira trilha personalizada.
+- Missões iniciais para os próximos 7 dias.
+
+3. Dashboard principal
+Criar uma tela inicial com:
+- Saudação personalizada.
+- Progresso do dia em porcentagem.
+- Missões do dia.
+- Hábitos do dia.
+- Tarefas prioritárias.
+- Resumo financeiro.
+- Meta principal em andamento.
+- Insight do mentor de IA.
+- Botões rápidos: Nova tarefa, Novo hábito, Nova despesa, Falar com IA, Replanejar meu dia.
+
+4. Mentor de IA
+Criar um assistente conversacional chamado provisoriamente de “Mentor”.
+Ele deve:
+- Criar rotinas.
+- Criar missões diárias.
+- Criar protocolos personalizados.
+- Revisar o dia do usuário.
+- Replanejar tarefas atrasadas.
+- Analisar hábitos.
+- Analisar finanças.
+- Sugerir melhorias.
+- Cobrar execução de forma contextual.
+- Explicar o motivo das recomendações.
+
+O chat não deve ser genérico. Ele deve ter acesso aos dados do usuário: tarefas, hábitos, metas, finanças e histórico de execução.
+
+5. Rotina e tarefas
+Criar módulo de planner diário:
+- Tarefas com título, descrição, prioridade, prazo, horário, categoria e status.
+- Status: pendente, em andamento, concluída, ignorada e reagendada.
+- Visualização por lista e por linha do tempo.
+- Botão “replanejar com IA”.
+- Tarefas recorrentes.
+- Missões geradas automaticamente pela IA.
+
+6. Hábitos gamificados
+Criar módulo de hábitos:
+- Cadastro de hábitos.
+- Frequência semanal.
+- Check-in diário.
+- Sequência/streak.
+- XP por conclusão.
+- Penalidade leve por falha.
+- Calendário de consistência.
+- Gráfico de evolução.
+- Associação de hábitos a metas.
+
+7. Metas
+Criar módulo de metas:
+- Nome da meta.
+- Categoria.
+- Prazo.
+- Motivação.
+- Indicador de progresso.
+- Subtarefas.
+- Hábitos vinculados.
+- Missões vinculadas.
+- Risco de atraso calculado com base na execução.
+- Recomendações da IA.
+
+8. Protocolos personalizados
+Criar uma área de protocolos:
+- Protocolos são planos guiados de vários dias.
+- Exemplos: Protocolo Rotina Matinal, Protocolo Foco Profundo, Protocolo Controle Financeiro, Protocolo Anti-Procrastinação.
+- Cada protocolo deve conter objetivo, duração, passos diários, hábitos vinculados, tarefas automáticas e acompanhamento do mentor de IA.
+- O usuário pode iniciar, pausar, concluir ou abandonar um protocolo.
+
+9. Finanças pessoais
+Criar módulo financeiro:
+- Cadastro manual de receitas e despesas.
+- Categorias: alimentação, transporte, moradia, saúde, lazer, educação, viagem, assinaturas, compras e outros.
+- Orçamento mensal por categoria.
+- Metas financeiras.
+- Gráficos de gastos.
+- Insights da IA.
+- Detecção de gastos acima do padrão.
+- Preparar arquitetura para futura integração via Open Finance, mas inicialmente permitir input manual e importação CSV.
+
+10. Evolução e gamificação
+Criar tela de progresso:
+- XP total.
+- Nível do usuário.
+- Sequência de dias ativos.
+- Conquistas.
+- Mapa da trilha.
+- Indicadores por área: produtividade, hábitos, finanças, saúde, estudos.
+- Histórico de evolução semanal/mensal.
+
+11. Revisão diária
+Criar fluxo de encerramento do dia:
+- O usuário informa o que concluiu.
+- O sistema mostra tarefas pendentes.
+- A IA pergunta o motivo das falhas.
+- A IA gera um resumo do dia.
+- A IA ajusta o plano do dia seguinte.
+
+12. Revisão semanal
+Criar tela semanal:
+- Resumo da semana.
+- Taxa de conclusão.
+- Hábitos mantidos.
+- Gastos da semana.
+- Metas avançadas.
+- Pontos de melhoria.
+- Plano da próxima semana gerado pela IA.
+
+Design:
+- Interface moderna, limpa, escura ou com modo claro/escuro.
+- Visual de alta produtividade, com sensação de painel premium.
+- Cards arredondados.
+- Cores sóbrias com destaque em azul, roxo ou verde.
+- Layout responsivo para desktop e mobile.
+- Evitar visual infantil.
+- Usar linguagem de execução, foco, disciplina e evolução.
+- Efeitos hover e transições sutis.
+
+Arquitetura sugerida:
+- Frontend: React ou Next.js.
+- Backend: Supabase.
+- Banco: PostgreSQL.
+- Autenticação: Supabase Auth.
+- IA: integração com API de LLM.
+```
