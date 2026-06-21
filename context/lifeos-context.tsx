@@ -1,0 +1,248 @@
+"use client";
+
+import React, { createContext, useContext, useState, useEffect } from "react";
+
+export interface Task {
+  id: number;
+  title: string;
+  status: "A Fazer" | "Em Andamento" | "Concluído";
+  priority: "Baixa" | "Média" | "Alta";
+}
+
+export interface Habit {
+  id: number;
+  name: string;
+  completed: boolean;
+  streak: number;
+}
+
+export interface Expense {
+  id: number;
+  description: string;
+  amount: number;
+  category: string;
+  type: "Receita" | "Despesa";
+  date: string;
+}
+
+export interface Protocol {
+  id: string;
+  name: string;
+  duration: number;
+  active: boolean;
+  tasks: string[];
+  habits: string[];
+}
+
+interface OnboardingAnswers {
+  name: string;
+  focus: string;
+  goal: string;
+  wakeTime: string;
+  sleepTime: string;
+  discipline: string;
+  tone: string;
+  diagnostic?: string;
+}
+
+interface LifeOSContextType {
+  tasks: Task[];
+  habits: Habit[];
+  expenses: Expense[];
+  xp: number;
+  level: number;
+  activeProtocol: string | null;
+  onboardingAnswers: OnboardingAnswers | null;
+  completeOnboarding: (answers: OnboardingAnswers) => void;
+  addTask: (title: string, priority: "Baixa" | "Média" | "Alta", status?: Task["status"]) => void;
+  toggleTask: (id: number) => void;
+  deleteTask: (id: number) => void;
+  moveTask: (id: number, status: Task["status"]) => void;
+  addHabit: (name: string) => void;
+  toggleHabit: (id: number) => void;
+  deleteHabit: (id: number) => void;
+  addExpense: (description: string, amount: number, category: string, type: "Receita" | "Despesa") => void;
+  deleteExpense: (id: number) => void;
+  activateProtocol: (id: string) => void;
+  deactivateProtocol: () => void;
+  gainXp: (amount: number) => void;
+}
+
+const LifeOSContext = createContext<LifeOSContextType | undefined>(undefined);
+
+export function LifeOSProvider({ children }: { children: React.ReactNode }) {
+  const [tasks, setTasks] = useState<Task[]>([]);
+  const [habits, setHabits] = useState<Habit[]>([]);
+  const [expenses, setExpenses] = useState<Expense[]>([]);
+  const [xp, setXp] = useState(120);
+  const [level, setLevel] = useState(1);
+  const [activeProtocol, setActiveProtocol] = useState<string | null>(null);
+  const [onboardingAnswers, setOnboardingAnswers] = useState<OnboardingAnswers | null>(null);
+
+  // Initialize with mockup data on mount (avoid SSR mismatch)
+  useEffect(() => {
+    setTasks([
+      { id: 1, title: "Finalizar Apresentação Q4", status: "Em Andamento", priority: "Alta" },
+      { id: 2, title: "Revisão de Metas LifeOS", status: "A Fazer", priority: "Média" },
+      { id: 3, title: "Ligar para Contabilidade", status: "A Fazer", priority: "Baixa" },
+    ]);
+    setHabits([
+      { id: 1, name: "Meditação 20min", completed: true, streak: 14 },
+      { id: 2, name: "Leitura 15 páginas", completed: false, streak: 5 },
+      { id: 3, name: "Exercício Físico", completed: false, streak: 0 },
+    ]);
+    setExpenses([
+      { id: 1, description: "Salário LifeOS", amount: 5000.00, category: "Salário", type: "Receita", date: "2026-06-18" },
+      { id: 2, description: "Supermercado Semanal", amount: 350.00, category: "Alimentação", type: "Despesa", date: "2026-06-19" },
+      { id: 3, description: "Gasolina Carro", amount: 120.00, category: "Transporte", type: "Despesa", date: "2026-06-19" },
+    ]);
+  }, []);
+
+  const gainXp = (amount: number) => {
+    setXp((prevXp) => {
+      const newXp = prevXp + amount;
+      const neededForNextLevel = level * 200;
+      if (newXp >= neededForNextLevel) {
+        setLevel((prev) => prev + 1);
+        return newXp - neededForNextLevel;
+      }
+      return newXp;
+    });
+  };
+
+  const completeOnboarding = (answers: OnboardingAnswers) => {
+    const diagnostic = `Você possui um perfil de execução ${
+      answers.discipline === "Alta" ? "Altamente Focado" : "Inconsistente"
+    }, com foco principal em ${answers.focus}. A IA definiu que sua melhor estratégia inicial é o ciclo matinal e controle rígido das tarefas de prioridade ${answers.discipline === "Baixa" ? "Alta" : "Média"}.`;
+    setOnboardingAnswers({ ...answers, diagnostic });
+    gainXp(100);
+  };
+
+  const addTask = (title: string, priority: "Baixa" | "Média" | "Alta", status: Task["status"] = "A Fazer") => {
+    setTasks((prev) => [
+      ...prev,
+      { id: Date.now(), title, status, priority },
+    ]);
+    gainXp(20);
+  };
+
+  const toggleTask = (id: number) => {
+    setTasks((prev) =>
+      prev.map((t) => {
+        if (t.id === id) {
+          const newStatus = t.status === "Concluído" ? "A Fazer" : "Concluído";
+          if (newStatus === "Concluído") gainXp(50);
+          return { ...t, status: newStatus };
+        }
+        return t;
+      })
+    );
+  };
+
+  const deleteTask = (id: number) => {
+    setTasks((prev) => prev.filter((t) => t.id !== id));
+  };
+
+  const moveTask = (id: number, status: Task["status"]) => {
+    setTasks((prev) =>
+      prev.map((t) => {
+        if (t.id === id) {
+          if (status === "Concluído" && t.status !== "Concluído") gainXp(50);
+          return { ...t, status };
+        }
+        return t;
+      })
+    );
+  };
+
+  const addHabit = (name: string) => {
+    setHabits((prev) => [...prev, { id: Date.now(), name, completed: false, streak: 0 }]);
+    gainXp(15);
+  };
+
+  const toggleHabit = (id: number) => {
+    setHabits((prev) =>
+      prev.map((h) => {
+        if (h.id === id) {
+          const completed = !h.completed;
+          const streak = completed ? h.streak + 1 : Math.max(0, h.streak - 1);
+          if (completed) gainXp(30);
+          return { ...h, completed, streak };
+        }
+        return h;
+      })
+    );
+  };
+
+  const deleteHabit = (id: number) => {
+    setHabits((prev) => prev.filter((h) => h.id !== id));
+  };
+
+  const addExpense = (description: string, amount: number, category: string, type: "Receita" | "Despesa") => {
+    setExpenses((prev) => [
+      { id: Date.now(), description, amount, category, type, date: new Date().toISOString().split("T")[0] },
+      ...prev,
+    ]);
+    gainXp(10);
+  };
+
+  const deleteExpense = (id: number) => {
+    setExpenses((prev) => prev.filter((e) => e.id !== id));
+  };
+
+  const activateProtocol = (protocolId: string) => {
+    setActiveProtocol(protocolId);
+    gainXp(50);
+
+    if (protocolId === "foco") {
+      addTask("Definir objetivos da Sprint", "Alta", "A Fazer");
+      addTask("Reunião de alinhamento individual", "Média", "A Fazer");
+      addHabit("Bloquear distrações (1h)");
+    } else if (protocolId === "manha") {
+      addHabit("Beber 500ml de água");
+      addHabit("Alongamento matinal");
+    } else if (protocolId === "financeiro") {
+      addTask("Anotar gastos da semana no LifeOS", "Alta", "A Fazer");
+      addHabit("Zero gastos supérfluos");
+    }
+  };
+
+  const deactivateProtocol = () => {
+    setActiveProtocol(null);
+  };
+
+  return (
+    <LifeOSContext.Provider
+      value={{
+        tasks,
+        habits,
+        expenses,
+        xp,
+        level,
+        activeProtocol,
+        onboardingAnswers,
+        completeOnboarding,
+        addTask,
+        toggleTask,
+        deleteTask,
+        moveTask,
+        addHabit,
+        toggleHabit,
+        deleteHabit,
+        addExpense,
+        deleteExpense,
+        activateProtocol,
+        deactivateProtocol,
+        gainXp,
+      }}
+    >
+      {children}
+    </LifeOSContext.Provider>
+  );
+}
+
+export function useLifeOS() {
+  const context = useContext(LifeOSContext);
+  if (!context) throw new Error("useLifeOS must be used within a LifeOSProvider");
+  return context;
+}
