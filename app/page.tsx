@@ -12,12 +12,13 @@ import {
   TrendingUp, 
   Trophy, 
   ArrowUpRight, 
-  X,
   BrainCircuit,
   MessageSquareCode
 } from "lucide-react";
 import { useLifeOS } from "@/context/lifeos-context";
 import Link from "next/link";
+import Modal from "@/components/ui/modal";
+import { useToast } from "@/components/ui/toast";
 
 export default function Dashboard() {
   const { 
@@ -33,6 +34,8 @@ export default function Dashboard() {
     addHabit, 
     addExpense 
   } = useLifeOS();
+
+  const { showToast } = useToast();
 
   // Modals Visibility States
   const [activeModal, setActiveModal] = useState<"task" | "habit" | "expense" | null>(null);
@@ -58,6 +61,7 @@ export default function Dashboard() {
     addTask(newTaskTitle, newTaskPriority);
     setNewTaskTitle("");
     setActiveModal(null);
+    showToast("Missão criada com sucesso!", "success");
   };
 
   const handleAddHabit = (e: React.FormEvent) => {
@@ -66,6 +70,7 @@ export default function Dashboard() {
     addHabit(newHabitName);
     setNewHabitName("");
     setActiveModal(null);
+    showToast("Hábito registrado com sucesso!", "success");
   };
 
   const handleAddExpense = (e: React.FormEvent) => {
@@ -76,6 +81,25 @@ export default function Dashboard() {
     setNewExpenseName("");
     setNewExpenseValue("");
     setActiveModal(null);
+    showToast(`${newExpenseType === "Receita" ? "Receita" : "Despesa"} lançada!`, "success");
+  };
+
+  const handleToggleTask = (id: number, currentStatus: string) => {
+    toggleTask(id);
+    if (currentStatus !== "Concluído") {
+      showToast("Missão concluída! +50 XP", "success");
+    } else {
+      showToast("Missão reaberta.", "info");
+    }
+  };
+
+  const handleToggleHabit = (id: number, currentCompleted: boolean) => {
+    toggleHabit(id);
+    if (!currentCompleted) {
+      showToast("Hábito realizado! +30 XP", "success");
+    } else {
+      showToast("Hábito redefinido.", "info");
+    }
   };
 
   // Day progress calculation
@@ -187,7 +211,7 @@ export default function Dashboard() {
                 {tasks.map((task) => (
                   <li 
                     key={task.id}
-                    onClick={() => toggleTask(task.id)}
+                    onClick={() => handleToggleTask(task.id, task.status)}
                     className={`group flex items-center gap-3 p-3.5 rounded-xl border transition-all cursor-pointer ${
                       task.status === "Concluído" 
                         ? "bg-[#32353c]/10 border-[#424754]/10 opacity-60 line-through" 
@@ -230,7 +254,7 @@ export default function Dashboard() {
                 {habits.map((habit) => (
                   <li 
                     key={habit.id}
-                    onClick={() => toggleHabit(habit.id)}
+                    onClick={() => handleToggleHabit(habit.id, habit.completed)}
                     className="flex justify-between items-center cursor-pointer group"
                   >
                     <div className="flex flex-col">
@@ -417,130 +441,102 @@ export default function Dashboard() {
       </div>
 
       {/* QUICK ACTIONS MODALS OVERLAY */}
-      {activeModal && (
-        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="glass-card max-w-md w-full rounded-3xl border border-white/10 p-6 flex flex-col gap-6 relative shadow-2xl bg-[#1d2027]">
-            <button 
-              onClick={() => setActiveModal(null)}
-              className="absolute top-4 right-4 text-on-surface/60 hover:text-on-surface transition-colors"
-            >
-              <X className="w-5 h-5" />
-            </button>
-
-            {/* Task Modal */}
-            {activeModal === "task" && (
-              <form onSubmit={handleAddTask} className="space-y-4">
-                <div className="flex items-center gap-2 border-b border-[#424754]/20 pb-3">
-                  <Plus className="text-primary w-5 h-5" />
-                  <h3 className="text-lg font-bold text-on-surface">Nova Tarefa</h3>
-                </div>
-                <div className="space-y-2">
-                  <label className="text-xs font-semibold text-on-surface-variant/80">Título</label>
-                  <input 
-                    type="text" 
-                    value={newTaskTitle}
-                    onChange={(e) => setNewTaskTitle(e.target.value)}
-                    placeholder="Digite a atividade..." 
-                    className="w-full bg-[#191b23] border border-[#424754]/30 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-primary text-on-surface"
-                    required
-                  />
-                </div>
-                <div className="space-y-2">
-                  <label className="text-xs font-semibold text-on-surface-variant/80">Prioridade</label>
-                  <select 
-                    value={newTaskPriority}
-                    onChange={(e) => setNewTaskPriority(e.target.value as any)}
-                    className="w-full bg-[#191b23] border border-[#424754]/30 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-primary text-on-surface"
-                  >
-                    <option value="Alta">Alta</option>
-                    <option value="Média">Média</option>
-                    <option value="Baixa">Baixa</option>
-                  </select>
-                </div>
-                <button type="submit" className="w-full py-3 bg-[#adc6ff] text-[#002e6a] rounded-xl text-sm font-semibold hover:opacity-90 transition-opacity">
-                  Criar Tarefa
-                </button>
-              </form>
-            )}
-
-            {/* Habit Modal */}
-            {activeModal === "habit" && (
-              <form onSubmit={handleAddHabit} className="space-y-4">
-                <div className="flex items-center gap-2 border-b border-[#424754]/20 pb-3">
-                  <Bolt className="text-secondary w-5 h-5" />
-                  <h3 className="text-lg font-bold text-on-surface">Novo Hábito</h3>
-                </div>
-                <div className="space-y-2">
-                  <label className="text-xs font-semibold text-on-surface-variant/80">Nome do Hábito</label>
-                  <input 
-                    type="text" 
-                    value={newHabitName}
-                    onChange={(e) => setNewHabitName(e.target.value)}
-                    placeholder="Ex: Beber 3L de água, Meditação..." 
-                    className="w-full bg-[#191b23] border border-[#424754]/30 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-primary text-on-surface"
-                    required
-                  />
-                </div>
-                <button type="submit" className="w-full py-3 bg-[#4edea3] text-[#003824] rounded-xl text-sm font-semibold hover:opacity-90 transition-opacity">
-                  Criar Hábito
-                </button>
-              </form>
-            )}
-
-            {/* Expense Modal */}
-            {activeModal === "expense" && (
-              <form onSubmit={handleAddExpense} className="space-y-4">
-                <div className="flex items-center gap-2 border-b border-[#424754]/20 pb-3">
-                  <Wallet className="text-tertiary w-5 h-5" />
-                  <h3 className="text-lg font-bold text-on-surface">Lançar Finança</h3>
-                </div>
-                <div className="flex gap-2 p-1 bg-[#191b23] rounded-xl border border-[#424754]/20 mb-2">
-                  <button 
-                    type="button" 
-                    onClick={() => setNewExpenseType("Despesa")}
-                    className={`flex-1 py-2 text-xs font-bold rounded-lg transition-colors ${newExpenseType === "Despesa" ? "bg-error/20 text-error border border-error/30" : "text-on-surface/60"}`}
-                  >
-                    Despesa
-                  </button>
-                  <button 
-                    type="button" 
-                    onClick={() => setNewExpenseType("Receita")}
-                    className={`flex-1 py-2 text-xs font-bold rounded-lg transition-colors ${newExpenseType === "Receita" ? "bg-secondary/20 text-secondary border border-secondary/30" : "text-on-surface/60"}`}
-                  >
-                    Receita
-                  </button>
-                </div>
-                <div className="space-y-2">
-                  <label className="text-xs font-semibold text-on-surface-variant/80">Descrição</label>
-                  <input 
-                    type="text" 
-                    value={newExpenseName}
-                    onChange={(e) => setNewExpenseName(e.target.value)}
-                    placeholder="Ex: Supermercado, Aluguel..." 
-                    className="w-full bg-[#191b23] border border-[#424754]/30 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-primary text-on-surface"
-                    required
-                  />
-                </div>
-                <div className="space-y-2">
-                  <label className="text-xs font-semibold text-on-surface-variant/80">Valor (R$)</label>
-                  <input 
-                    type="number" 
-                    step="0.01"
-                    value={newExpenseValue}
-                    onChange={(e) => setNewExpenseValue(e.target.value)}
-                    placeholder="0.00" 
-                    className="w-full bg-[#191b23] border border-[#424754]/30 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-primary text-on-surface"
-                    required
-                  />
-                </div>
-                <button type="submit" className={`w-full py-3 text-sm font-semibold rounded-xl text-white ${newExpenseType === "Receita" ? "bg-secondary text-[#003824]" : "bg-error"}`}>
-                  Confirmar Lançamento
-                </button>
-              </form>
-            )}
+      <Modal isOpen={activeModal === "task"} onClose={() => setActiveModal(null)} title="Nova Tarefa">
+        <form onSubmit={handleAddTask} className="space-y-4">
+          <div className="space-y-2">
+            <label className="text-xs font-semibold text-on-surface-variant/80">Título</label>
+            <input 
+              type="text" 
+              value={newTaskTitle}
+              onChange={(e) => setNewTaskTitle(e.target.value)}
+              placeholder="Digite a atividade..." 
+              className="w-full bg-[#191b23] border border-[#424754]/30 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-primary text-on-surface"
+              required
+            />
           </div>
-        </div>
-      )}
+          <div className="space-y-2">
+            <label className="text-xs font-semibold text-on-surface-variant/80">Prioridade</label>
+            <select 
+              value={newTaskPriority}
+              onChange={(e) => setNewTaskPriority(e.target.value as any)}
+              className="w-full bg-[#191b23] border border-[#424754]/30 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-primary text-on-surface"
+            >
+              <option value="Alta">Alta</option>
+              <option value="Média">Média</option>
+              <option value="Baixa">Baixa</option>
+            </select>
+          </div>
+          <button type="submit" className="w-full py-3 bg-[#adc6ff] text-[#002e6a] rounded-xl text-sm font-semibold hover:opacity-90 transition-opacity">
+            Criar Tarefa
+          </button>
+        </form>
+      </Modal>
+
+      <Modal isOpen={activeModal === "habit"} onClose={() => setActiveModal(null)} title="Novo Hábito">
+        <form onSubmit={handleAddHabit} className="space-y-4">
+          <div className="space-y-2">
+            <label className="text-xs font-semibold text-on-surface-variant/80">Nome do Hábito</label>
+            <input 
+              type="text" 
+              value={newHabitName}
+              onChange={(e) => setNewHabitName(e.target.value)}
+              placeholder="Ex: Beber 3L de água, Meditação..." 
+              className="w-full bg-[#191b23] border border-[#424754]/30 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-primary text-on-surface"
+              required
+            />
+          </div>
+          <button type="submit" className="w-full py-3 bg-[#4edea3] text-[#003824] rounded-xl text-sm font-semibold hover:opacity-90 transition-opacity">
+            Criar Hábito
+          </button>
+        </form>
+      </Modal>
+
+      <Modal isOpen={activeModal === "expense"} onClose={() => setActiveModal(null)} title="Lançar Finança">
+        <form onSubmit={handleAddExpense} className="space-y-4">
+          <div className="flex gap-2 p-1 bg-[#191b23] rounded-xl border border-[#424754]/20 mb-2">
+            <button 
+              type="button" 
+              onClick={() => setNewExpenseType("Despesa")}
+              className={`flex-1 py-2 text-xs font-bold rounded-lg transition-colors ${newExpenseType === "Despesa" ? "bg-error/20 text-error border border-error/30" : "text-on-surface/60"}`}
+            >
+              Despesa
+            </button>
+            <button 
+              type="button" 
+              onClick={() => setNewExpenseType("Receita")}
+              className={`flex-1 py-2 text-xs font-bold rounded-lg transition-colors ${newExpenseType === "Receita" ? "bg-secondary/20 text-secondary border border-secondary/30" : "text-on-surface/60"}`}
+            >
+              Receita
+            </button>
+          </div>
+          <div className="space-y-2">
+            <label className="text-xs font-semibold text-on-surface-variant/80">Descrição</label>
+            <input 
+              type="text" 
+              value={newExpenseName}
+              onChange={(e) => setNewExpenseName(e.target.value)}
+              placeholder="Ex: Supermercado, Aluguel..." 
+              className="w-full bg-[#191b23] border border-[#424754]/30 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-primary text-on-surface"
+              required
+            />
+          </div>
+          <div className="space-y-2">
+            <label className="text-xs font-semibold text-on-surface-variant/80">Valor (R$)</label>
+            <input 
+              type="number" 
+              step="0.01"
+              value={newExpenseValue}
+              onChange={(e) => setNewExpenseValue(e.target.value)}
+              placeholder="0.00" 
+              className="w-full bg-[#191b23] border border-[#424754]/30 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-primary text-on-surface"
+              required
+            />
+          </div>
+          <button type="submit" className={`w-full py-3 text-sm font-semibold rounded-xl text-white ${newExpenseType === "Receita" ? "bg-secondary text-[#003824]" : "bg-error"}`}>
+            Confirmar Lançamento
+          </button>
+        </form>
+      </Modal>
     </main>
   );
 }

@@ -3,6 +3,7 @@ import "./globals.css";
 import Sidebar from "@/components/layout/sidebar";
 import MobileNav from "@/components/layout/mobile-nav";
 import { LifeOSProvider } from "@/context/lifeos-context";
+import { ToastProvider } from "@/components/ui/toast";
 
 export const metadata: Metadata = {
   title: "LifeOS — Command Center",
@@ -25,11 +26,13 @@ export default function RootLayout({
       </head>
       <body className="bg-background text-on-background antialiased flex min-h-screen">
         <LifeOSProvider>
-          <Sidebar />
-          <div className="flex-1 flex flex-col md:pl-[280px] pb-16 md:pb-0">
-            {children}
-          </div>
-          <MobileNav />
+          <ToastProvider>
+            <Sidebar />
+            <div className="flex-1 flex flex-col md:pl-[280px] pb-16 md:pb-0">
+              {children}
+            </div>
+            <MobileNav />
+          </ToastProvider>
         </LifeOSProvider>
       </body>
     </html>
