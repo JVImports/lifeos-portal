@@ -72,6 +72,20 @@ interface LifeOSContextType {
 
 const LifeOSContext = createContext<LifeOSContextType | undefined>(undefined);
 
+const STORAGE_KEY = "lifeos:v1";
+
+const XP_REWARDS = {
+  onboarding: 100,
+  addTask: 20,
+  completeTask: 50,
+  addHabit: 15,
+  completeHabit: 30,
+  addExpense: 10,
+  activateProtocol: 50,
+  connectOpenFinance: 50,
+  dailyReview: 80,
+};
+
 export function LifeOSProvider({ children }: { children: React.ReactNode }) {
   const [tasks, setTasks] = useState<Task[]>([]);
   const [habits, setHabits] = useState<Habit[]>([]);
@@ -80,35 +94,79 @@ export function LifeOSProvider({ children }: { children: React.ReactNode }) {
   const [level, setLevel] = useState(1);
   const [activeProtocol, setActiveProtocol] = useState<string | null>(null);
   const [onboardingAnswers, setOnboardingAnswers] = useState<OnboardingAnswers | null>(null);
+  const [hasHydrated, setHasHydrated] = useState(false);
 
-  // Initialize with mockup data on mount (avoid SSR mismatch)
+  // Initialize and load from localStorage
   useEffect(() => {
-    setTasks([
-      { id: 1, title: "Finalizar Apresentação Q4", status: "Em Andamento", priority: "Alta" },
-      { id: 2, title: "Revisão de Metas LifeOS", status: "A Fazer", priority: "Média" },
-      { id: 3, title: "Ligar para Contabilidade", status: "A Fazer", priority: "Baixa" },
-    ]);
-    setHabits([
-      { id: 1, name: "Meditação 20min", completed: true, streak: 14 },
-      { id: 2, name: "Leitura 15 páginas", completed: false, streak: 5 },
-      { id: 3, name: "Exercício Físico", completed: false, streak: 0 },
-    ]);
-    setExpenses([
-      { id: 1, description: "Salário LifeOS", amount: 5000.00, category: "Salário", type: "Receita", date: "2026-06-18" },
-      { id: 2, description: "Supermercado Semanal", amount: 350.00, category: "Alimentação", type: "Despesa", date: "2026-06-19" },
-      { id: 3, description: "Gasolina Carro", amount: 120.00, category: "Transporte", type: "Despesa", date: "2026-06-19" },
-    ]);
+    try {
+      const stored = localStorage.getItem(STORAGE_KEY);
+      if (stored) {
+        const parsed = JSON.parse(stored);
+        if (parsed.tasks) setTasks(parsed.tasks);
+        if (parsed.habits) setHabits(parsed.habits);
+        if (parsed.expenses) setExpenses(parsed.expenses);
+        if (parsed.xp !== undefined) setXp(parsed.xp);
+        if (parsed.level !== undefined) setLevel(parsed.level);
+        if (parsed.activeProtocol !== undefined) setActiveProtocol(parsed.activeProtocol);
+        if (parsed.onboardingAnswers !== undefined) setOnboardingAnswers(parsed.onboardingAnswers);
+      } else {
+        // Load default mockup data only on first start
+        setTasks([
+          { id: 1, title: "Finalizar Apresentação Q4", status: "Em Andamento", priority: "Alta" },
+          { id: 2, title: "Revisão de Metas LifeOS", status: "A Fazer", priority: "Média" },
+          { id: 3, title: "Ligar para Contabilidade", status: "A Fazer", priority: "Baixa" },
+        ]);
+        setHabits([
+          { id: 1, name: "Meditação 20min", completed: true, streak: 14 },
+          { id: 2, name: "Leitura 15 páginas", completed: false, streak: 5 },
+          { id: 3, name: "Exercício Físico", completed: false, streak: 0 },
+        ]);
+        setExpenses([
+          { id: 1, description: "Salário LifeOS", amount: 5000.00, category: "Salário", type: "Receita", date: "2026-06-18" },
+          { id: 2, description: "Supermercado Semanal", amount: 350.00, category: "Alimentação", type: "Despesa", date: "2026-06-19" },
+          { id: 3, description: "Gasolina Carro", amount: 120.00, category: "Transporte", type: "Despesa", date: "2026-06-19" },
+        ]);
+      }
+    } catch (e) {
+      console.error("Failed to load LifeOS state from localStorage", e);
+    } finally {
+      setHasHydrated(true);
+    }
   }, []);
 
+  // Save changes to localStorage after hydration
+  useEffect(() => {
+    if (!hasHydrated) return;
+    try {
+      const stateToStore = {
+        tasks,
+        habits,
+        expenses,
+        xp,
+        level,
+        activeProtocol,
+        onboardingAnswers,
+      };
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(stateToStore));
+    } catch (e) {
+      console.error("Failed to save LifeOS state to localStorage", e);
+    }
+  }, [tasks, habits, expenses, xp, level, activeProtocol, onboardingAnswers, hasHydrated]);
+
   const gainXp = (amount: number) => {
-    setXp((prevXp) => {
-      const newXp = prevXp + amount;
-      const neededForNextLevel = level * 200;
-      if (newXp >= neededForNextLevel) {
-        setLevel((prev) => prev + 1);
-        return newXp - neededForNextLevel;
-      }
-      return newXp;
+    setLevel((currentLevel) => {
+      let nextLevel = currentLevel;
+      setXp((currentXp) => {
+        let newXp = currentXp + amount;
+        let req = nextLevel * 200;
+        while (newXp >= req) {
+          newXp -= req;
+          nextLevel += 1;
+          req = nextLevel * 200;
+        }
+        return newXp;
+      });
+      return nextLevel;
     });
   };
 
@@ -117,7 +175,7 @@ export function LifeOSProvider({ children }: { children: React.ReactNode }) {
       answers.discipline === "Alta" ? "Altamente Focado" : "Inconsistente"
     }, com foco principal em ${answers.focus}. A IA definiu que sua melhor estratégia inicial é o ciclo matinal e controle rígido das tarefas de prioridade ${answers.discipline === "Baixa" ? "Alta" : "Média"}.`;
     setOnboardingAnswers({ ...answers, diagnostic });
-    gainXp(100);
+    gainXp(XP_REWARDS.onboarding);
   };
 
   const addTask = (title: string, priority: "Baixa" | "Média" | "Alta", status: Task["status"] = "A Fazer") => {
@@ -125,7 +183,7 @@ export function LifeOSProvider({ children }: { children: React.ReactNode }) {
       ...prev,
       { id: Date.now(), title, status, priority },
     ]);
-    gainXp(20);
+    gainXp(XP_REWARDS.addTask);
   };
 
   const toggleTask = (id: number) => {
@@ -133,7 +191,7 @@ export function LifeOSProvider({ children }: { children: React.ReactNode }) {
       prev.map((t) => {
         if (t.id === id) {
           const newStatus = t.status === "Concluído" ? "A Fazer" : "Concluído";
-          if (newStatus === "Concluído") gainXp(50);
+          if (newStatus === "Concluído") gainXp(XP_REWARDS.completeTask);
           return { ...t, status: newStatus };
         }
         return t;
@@ -149,7 +207,7 @@ export function LifeOSProvider({ children }: { children: React.ReactNode }) {
     setTasks((prev) =>
       prev.map((t) => {
         if (t.id === id) {
-          if (status === "Concluído" && t.status !== "Concluído") gainXp(50);
+          if (status === "Concluído" && t.status !== "Concluído") gainXp(XP_REWARDS.completeTask);
           return { ...t, status };
         }
         return t;
@@ -159,7 +217,7 @@ export function LifeOSProvider({ children }: { children: React.ReactNode }) {
 
   const addHabit = (name: string) => {
     setHabits((prev) => [...prev, { id: Date.now(), name, completed: false, streak: 0 }]);
-    gainXp(15);
+    gainXp(XP_REWARDS.addHabit);
   };
 
   const toggleHabit = (id: number) => {
@@ -168,7 +226,7 @@ export function LifeOSProvider({ children }: { children: React.ReactNode }) {
         if (h.id === id) {
           const completed = !h.completed;
           const streak = completed ? h.streak + 1 : Math.max(0, h.streak - 1);
-          if (completed) gainXp(30);
+          if (completed) gainXp(XP_REWARDS.completeHabit);
           return { ...h, completed, streak };
         }
         return h;
@@ -185,7 +243,7 @@ export function LifeOSProvider({ children }: { children: React.ReactNode }) {
       { id: Date.now(), description, amount, category, type, date: new Date().toISOString().split("T")[0] },
       ...prev,
     ]);
-    gainXp(10);
+    gainXp(XP_REWARDS.addExpense);
   };
 
   const deleteExpense = (id: number) => {
@@ -194,7 +252,7 @@ export function LifeOSProvider({ children }: { children: React.ReactNode }) {
 
   const activateProtocol = (protocolId: string) => {
     setActiveProtocol(protocolId);
-    gainXp(50);
+    gainXp(XP_REWARDS.activateProtocol);
 
     if (protocolId === "foco") {
       addTask("Definir objetivos da Sprint", "Alta", "A Fazer");
@@ -220,7 +278,7 @@ export function LifeOSProvider({ children }: { children: React.ReactNode }) {
       { id: Date.now() + 3, description: `${bank}: Spotify Premium`, amount: 21.90, category: "Assinaturas", type: "Despesa", date: new Date().toISOString().split("T")[0] },
       ...prev,
     ]);
-    gainXp(50);
+    gainXp(XP_REWARDS.connectOpenFinance);
   };
 
   const completeDailyReview = (tomorrowTasks: string[]) => {
@@ -231,7 +289,7 @@ export function LifeOSProvider({ children }: { children: React.ReactNode }) {
     });
 
     setHabits((prev) => prev.map((h) => ({ ...h, completed: false })));
-    gainXp(80);
+    gainXp(XP_REWARDS.dailyReview);
   };
 
   return (

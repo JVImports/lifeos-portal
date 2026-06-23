@@ -273,6 +273,14 @@ export default function Financas() {
                 <p className="text-xs text-on-surface-variant leading-relaxed">
                   Conecte seu banco usando a infraestrutura do Open Finance para importar seus lançamentos e gastos automaticamente para o LifeOS.
                 </p>
+                <div className="p-3 bg-amber-500/10 border border-amber-500/20 text-amber-400 rounded-xl text-xs flex flex-col gap-1">
+                  <span className="font-bold flex items-center gap-1.5 uppercase text-[9px] tracking-wider">
+                    ⚠️ Modo de Simulação
+                  </span>
+                  <span className="opacity-90 leading-relaxed text-[11px]">
+                    Nenhum banco real será conectado neste MVP. Esta interface serve para demonstrar a categorização automatizada de despesas.
+                  </span>
+                </div>
                 <div className="grid grid-cols-2 gap-3">
                   {["Nubank", "Banco Itaú", "Banco do Brasil", "Banco Inter"].map((bank) => (
                     <button

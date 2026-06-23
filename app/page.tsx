@@ -141,7 +141,10 @@ export default function Dashboard() {
           <BrainCircuit className="text-primary w-6 h-6" />
         </div>
         <div className="space-y-1 text-center md:text-left flex-1">
-          <span className="text-[10px] font-bold uppercase tracking-wider text-primary">Insight do Mentor Aether</span>
+          <div className="flex items-center justify-center md:justify-start gap-2">
+            <span className="text-[10px] font-bold uppercase tracking-wider text-primary">Insight do Mentor Aether</span>
+            <span className="px-1.5 py-0.5 bg-[#424754]/40 border border-[#424754]/60 text-[#c2c6d6]/60 rounded text-[8px] uppercase tracking-wider font-bold">Demo</span>
+          </div>
           <p className="text-sm opacity-90 leading-relaxed text-on-surface-variant">
             {activeProtocol 
               ? `Você está rodando o protocolo "${activeProtocol === "foco" ? "Foco Profundo" : activeProtocol === "manha" ? "Rotina Matinal" : "Organização Financeira"}". Mantenha a sequência!`

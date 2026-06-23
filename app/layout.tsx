@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import Sidebar from "@/components/layout/sidebar";
+import MobileNav from "@/components/layout/mobile-nav";
 import { LifeOSProvider } from "@/context/lifeos-context";
 
 export const metadata: Metadata = {
@@ -25,9 +26,10 @@ export default function RootLayout({
       <body className="bg-background text-on-background antialiased flex min-h-screen">
         <LifeOSProvider>
           <Sidebar />
-          <div className="flex-1 flex flex-col md:pl-[280px]">
+          <div className="flex-1 flex flex-col md:pl-[280px] pb-16 md:pb-0">
             {children}
           </div>
+          <MobileNav />
         </LifeOSProvider>
       </body>
     </html>

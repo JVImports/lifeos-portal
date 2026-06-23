@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useLifeOS } from "@/context/lifeos-context";
-import { BrainCircuit, Send, Terminal } from "lucide-react";
+import { BrainCircuit, Send, Sparkles, Terminal, ShieldAlert } from "lucide-react";
 
 interface Message {
   id: number;
@@ -92,9 +92,15 @@ export default function MentorChat() {
           </h1>
           <p className="text-sm opacity-60 mt-1">Converse com seu mentor para planejar seu dia, analisar métricas e ajustar rotinas</p>
         </div>
-        <div className="flex items-center gap-2 px-3 py-1.5 bg-[#4d8eff]/10 border border-[#4d8eff]/20 rounded-xl text-xs text-primary font-bold">
-          <Terminal className="w-3.5 h-3.5" />
-          <span>Aether v1.2 Active</span>
+        <div className="flex flex-col md:flex-row items-end md:items-center gap-2">
+          <div className="flex items-center gap-1.5 px-2.5 py-1 bg-amber-500/10 border border-amber-500/20 rounded-lg text-[10px] text-amber-400 font-bold uppercase tracking-wider">
+            <ShieldAlert className="w-3 h-3" />
+            <span>Simulação</span>
+          </div>
+          <div className="flex items-center gap-2 px-3 py-1.5 bg-[#4d8eff]/10 border border-[#4d8eff]/20 rounded-xl text-xs text-primary font-bold">
+            <Terminal className="w-3.5 h-3.5" />
+            <span>Aether v1.2 Active</span>
+          </div>
         </div>
       </header>
 
