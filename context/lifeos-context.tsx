@@ -2,6 +2,7 @@
 
 import React, { createContext, useContext, useState, useEffect } from "react";
 import { supabase } from "@/lib/supabase/client";
+import { useRouter, usePathname } from "next/navigation";
 
 export interface Task {
   id: any;
@@ -69,6 +70,10 @@ interface LifeOSContextType {
   gainXp: (amount: number) => void;
   connectOpenFinance: (bank: string) => void;
   completeDailyReview: (tomorrowTasks: string[]) => void;
+  user: any;
+  login: (email: string, password: string) => Promise<{ error: any }>;
+  signUp: (email: string, password: string) => Promise<{ error: any }>;
+  logout: () => Promise<void>;
 }
 
 const LifeOSContext = createContext<LifeOSContextType | undefined>(undefined);
@@ -95,21 +100,72 @@ export function LifeOSProvider({ children }: { children: React.ReactNode }) {
   const [onboardingAnswers, setOnboardingAnswers] = useState<OnboardingAnswers | null>(null);
   const [user, setUser] = useState<any>(null);
   const [hasHydrated, setHasHydrated] = useState(false);
+  const router = useRouter();
+  const pathname = usePathname();
 
-  // Auth initialization (Anonymous sign-in to persist data per browser session)
+  // Auth initialization & listener
   useEffect(() => {
-    const handleAuth = async () => {
-      let { data: { session } } = await supabase.auth.getSession();
-      if (!session) {
-        const { data, error } = await supabase.auth.signInAnonymously();
-        session = data.session;
-      }
-      if (session?.user) {
-        setUser(session.user);
-      }
+    const checkUser = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      setUser(session?.user ?? null);
+      setHasHydrated(true);
     };
-    handleAuth();
+
+    checkUser();
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      setUser(session?.user ?? null);
+      setHasHydrated(true);
+    });
+
+    return () => {
+      subscription.unsubscribe();
+    };
   }, []);
+
+  // Client-side route protection
+  useEffect(() => {
+    if (!hasHydrated) return;
+
+    if (!user) {
+      if (pathname !== "/login") {
+        router.push("/login");
+      }
+    } else {
+      if (pathname === "/login") {
+        router.push("/");
+      }
+    }
+  }, [user, hasHydrated, pathname, router]);
+
+  const login = async (email: string, password: string) => {
+    const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+    if (!error && data?.user) {
+      setUser(data.user);
+    }
+    return { error };
+  };
+
+  const signUp = async (email: string, password: string) => {
+    const { data, error } = await supabase.auth.signUp({ email, password });
+    if (!error && data?.user) {
+      setUser(data.user);
+    }
+    return { error };
+  };
+
+  const logout = async () => {
+    await supabase.auth.signOut();
+    setUser(null);
+    setTasks([]);
+    setHabits([]);
+    setExpenses([]);
+    setXp(120);
+    setLevel(1);
+    setActiveProtocol(null);
+    setOnboardingAnswers(null);
+    router.push("/login");
+  };
 
   // Load state from Supabase once user is authenticated
   useEffect(() => {
@@ -512,6 +568,10 @@ export function LifeOSProvider({ children }: { children: React.ReactNode }) {
         gainXp,
         connectOpenFinance,
         completeDailyReview,
+        user,
+        login,
+        signUp,
+        logout,
       }}
     >
       {children}

@@ -13,6 +13,9 @@ import {
 export default function MobileNav() {
   const pathname = usePathname();
 
+  // Hide mobile nav on login screen
+  if (pathname === "/login") return null;
+
   const navItems = [
     { name: "Hoje", href: "/", icon: LayoutDashboard },
     { name: "Atividades", href: "/atividades", icon: CheckSquare },

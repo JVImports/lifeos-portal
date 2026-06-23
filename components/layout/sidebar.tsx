@@ -8,8 +8,6 @@ import {
   Wallet, 
   Sparkles, 
   Trophy, 
-  BarChart3, 
-  Settings, 
   HelpCircle, 
   LogOut,
   BrainCircuit,
@@ -22,7 +20,11 @@ import { useLifeOS } from "@/context/lifeos-context";
 
 export default function Sidebar() {
   const pathname = usePathname();
-  const { xp, level } = useLifeOS();
+  
+  // Hide sidebar on login screen
+  if (pathname === "/login") return null;
+
+  const { xp, level, user, logout } = useLifeOS();
 
   const xpNeeded = level * 200;
   const xpPercentage = Math.min((xp / xpNeeded) * 100, 100);
@@ -91,6 +93,12 @@ export default function Sidebar() {
       </nav>
 
       <div className="mt-auto pt-4 space-y-4">
+        {user && (
+          <div className="px-4 py-2 border-t border-[#424754]/10 pt-4 flex flex-col">
+            <span className="text-[10px] font-bold uppercase tracking-wider text-on-surface-variant/50">Usuário</span>
+            <span className="text-xs font-semibold text-[#c2c6d6] truncate mt-0.5" title={user.email}>{user.email}</span>
+          </div>
+        )}
         <div className="flex flex-col gap-1">
           <Link
             href="#"
@@ -99,13 +107,13 @@ export default function Sidebar() {
             <HelpCircle className="w-4 h-4" />
             <span>Ajuda</span>
           </Link>
-          <Link
-            href="#"
-            className="flex items-center gap-4 px-4 py-2 text-sm text-[#ffb4ab] hover:text-[#ffb4ab] hover:opacity-80 transition-colors"
+          <button
+            onClick={() => logout()}
+            className="flex items-center gap-4 px-4 py-2 text-sm text-[#ffb4ab] hover:text-[#ffb4ab] hover:opacity-80 transition-colors w-full text-left"
           >
             <LogOut className="w-4 h-4" />
             <span>Sair</span>
-          </Link>
+          </button>
         </div>
       </div>
     </aside>
