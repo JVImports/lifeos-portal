@@ -3,9 +3,14 @@
 import { useState } from "react";
 import { Plus, Trophy, Calendar, Sliders, Trash } from "lucide-react";
 import { useLifeOS } from "@/context/lifeos-context";
+import PageHeader from "@/components/ui/page-header";
+import Modal from "@/components/ui/modal";
+import EmptyState from "@/components/ui/empty-state";
+import { useToast } from "@/components/ui/toast";
 
 export default function Metas() {
   const { gainXp } = useLifeOS();
+  const { showToast } = useToast();
 
   // Keep goals states local since they require slider logic, but link XP gains on updates
   const [goals, setGoals] = useState([
@@ -28,6 +33,7 @@ export default function Metas() {
       { id: Date.now(), name: newName, progress: 0, dueDate: newDueDate || "Sem prazo", category: newCategory }
     ]);
     gainXp(30);
+    showToast("Meta criada com sucesso! (+30 XP) 🚀", "success");
     setNewName("");
     setNewDueDate("");
     setIsAdding(false);
@@ -40,6 +46,11 @@ export default function Metas() {
         if (nextProg > g.progress) {
           gainXp((nextProg - g.progress) * 2); // Gain 2 XP per 1% progress increase
         }
+        if (nextProg === 100 && g.progress < 100) {
+          showToast(`🏆 Sensacional! Você concluiu a meta: "${g.name}"!`, "success");
+        } else {
+          showToast("Progresso da meta atualizado!", "info");
+        }
         return { ...g, progress: nextProg };
       }
       return g;
@@ -48,15 +59,15 @@ export default function Metas() {
 
   const deleteGoal = (id: number) => {
     setGoals(goals.filter(g => g.id !== id));
+    showToast("Meta removida.", "info");
   };
 
   return (
     <main className="p-6 md:p-10 min-h-screen">
-      <header className="flex items-center justify-between gap-4 mb-8">
-        <div>
-          <h1 className="text-3xl md:text-4xl font-bold tracking-tight text-on-surface">Metas e OKRs</h1>
-          <p className="text-sm opacity-60 mt-1">Acompanhe seus objetivos pessoais e marcos de evolução</p>
-        </div>
+      <PageHeader 
+        title="Metas e OKRs" 
+        description="Acompanhe seus objetivos pessoais e marcos de evolução"
+      >
         <button 
           onClick={() => setIsAdding(true)}
           className="flex items-center gap-2 px-5 py-3 bg-[#8b5cf6] text-white rounded-xl text-sm font-semibold shadow-lg shadow-[#8b5cf6]/10 hover:scale-[1.02] active:scale-[0.98] transition-all"
@@ -64,55 +75,56 @@ export default function Metas() {
           <Plus className="w-4 h-4" />
           Adicionar Meta
         </button>
-      </header>
+      </PageHeader>
 
-      {isAdding && (
-        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <form onSubmit={addGoal} className="glass-card max-w-md w-full rounded-3xl border border-white/10 p-6 flex flex-col gap-5 relative bg-[#1d2027]">
-            <h3 className="text-lg font-bold">Nova Meta Pessoal</h3>
+      <Modal
+        isOpen={isAdding}
+        onClose={() => setIsAdding(false)}
+        title="Nova Meta Pessoal"
+      >
+        <form onSubmit={addGoal} className="flex flex-col gap-5">
+          <div className="space-y-1">
+            <label className="text-xs font-semibold opacity-70">Objetivo / Nome da Meta</label>
+            <input 
+              type="text" 
+              value={newName} 
+              onChange={(e) => setNewName(e.target.value)} 
+              className="w-full bg-[#191b23] border border-[#424754]/30 rounded-xl px-4 py-2.5 text-sm text-on-surface focus:outline-none" 
+              placeholder="Ex: Ler 12 livros no ano..."
+              required 
+            />
+          </div>
+          <div className="grid grid-cols-2 gap-4">
             <div className="space-y-1">
-              <label className="text-xs font-semibold opacity-70">Objetivo / Nome da Meta</label>
+              <label className="text-xs font-semibold opacity-70">Prazo Limite</label>
               <input 
-                type="text" 
-                value={newName} 
-                onChange={(e) => setNewName(e.target.value)} 
+                type="date" 
+                value={newDueDate} 
+                onChange={(e) => setNewDueDate(e.target.value)} 
                 className="w-full bg-[#191b23] border border-[#424754]/30 rounded-xl px-4 py-2.5 text-sm text-on-surface focus:outline-none" 
-                placeholder="Ex: Ler 12 livros no ano..."
-                required 
               />
             </div>
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-1">
-                <label className="text-xs font-semibold opacity-70">Prazo Limite</label>
-                <input 
-                  type="date" 
-                  value={newDueDate} 
-                  onChange={(e) => setNewDueDate(e.target.value)} 
-                  className="w-full bg-[#191b23] border border-[#424754]/30 rounded-xl px-4 py-2.5 text-sm text-on-surface focus:outline-none" 
-                />
-              </div>
-              <div className="space-y-1">
-                <label className="text-xs font-semibold opacity-70">Categoria</label>
-                <select 
-                  value={newCategory} 
-                  onChange={(e) => setNewCategory(e.target.value)} 
-                  className="w-full bg-[#191b23] border border-[#424754]/30 rounded-xl px-4 py-2.5 text-sm text-on-surface focus:outline-none"
-                >
-                  <option value="Pessoal">Pessoal</option>
-                  <option value="Profissional">Profissional</option>
-                  <option value="Financeiro">Financeiro</option>
-                  <option value="Saúde">Saúde</option>
-                  <option value="Espiritual">Espiritual</option>
-                </select>
-              </div>
+            <div className="space-y-1">
+              <label className="text-xs font-semibold opacity-70">Categoria</label>
+              <select 
+                value={newCategory} 
+                onChange={(e) => setNewCategory(e.target.value)} 
+                className="w-full bg-[#191b23] border border-[#424754]/30 rounded-xl px-4 py-2.5 text-sm text-on-surface focus:outline-none"
+              >
+                <option value="Pessoal">Pessoal</option>
+                <option value="Profissional">Profissional</option>
+                <option value="Financeiro">Financeiro</option>
+                <option value="Saúde">Saúde</option>
+                <option value="Espiritual">Espiritual</option>
+              </select>
             </div>
-            <div className="flex gap-2 mt-2">
-              <button type="submit" className="flex-1 py-3 bg-[#8b5cf6] text-white rounded-xl text-sm font-semibold hover:opacity-90">Adicionar Meta</button>
-              <button type="button" onClick={() => setIsAdding(false)} className="flex-1 py-3 bg-[#32353c] text-on-surface rounded-xl text-sm font-semibold hover:opacity-90">Cancelar</button>
-            </div>
-          </form>
-        </div>
-      )}
+          </div>
+          <div className="flex gap-2 mt-2">
+            <button type="submit" className="flex-1 py-3 bg-[#8b5cf6] text-white rounded-xl text-sm font-semibold hover:opacity-90">Adicionar Meta</button>
+            <button type="button" onClick={() => setIsAdding(false)} className="flex-1 py-3 bg-[#32353c] text-on-surface rounded-xl text-sm font-semibold hover:opacity-90">Cancelar</button>
+          </div>
+        </form>
+      </Modal>
 
       {/* Goals Cards List */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -152,21 +164,18 @@ export default function Metas() {
                 <span className="text-xs opacity-50 flex items-center gap-1"><Sliders className="w-3 h-3" /> Progresso</span>
                 <div className="flex gap-1.5">
                   <button 
-                    type="button"
                     onClick={() => updateProgress(goal.id, goal.progress - 5)}
                     className="w-8 h-8 rounded-lg bg-[#32353c]/50 text-xs font-bold hover:bg-[#32353c] border border-[#424754]/20 transition-colors"
                   >
                     -5%
                   </button>
                   <button 
-                    type="button"
                     onClick={() => updateProgress(goal.id, goal.progress + 5)}
                     className="w-8 h-8 rounded-lg bg-[#32353c]/50 text-xs font-bold hover:bg-[#32353c] border border-[#424754]/20 transition-colors"
                   >
                     +5%
                   </button>
                   <button 
-                    type="button"
                     onClick={() => updateProgress(goal.id, 100)}
                     className="px-3 h-8 rounded-lg bg-[#8b5cf6]/10 text-[#8b5cf6] text-xs font-bold hover:bg-[#8b5cf6]/20 border border-[#8b5cf6]/20 transition-colors"
                   >
@@ -178,8 +187,12 @@ export default function Metas() {
           </div>
         ))}
         {goals.length === 0 && (
-          <div className="col-span-2 py-16 text-center border border-dashed border-[#424754]/20 rounded-2xl text-xs opacity-40">
-            Nenhuma meta cadastrada
+          <div className="col-span-2">
+            <EmptyState 
+              message="Nenhuma meta cadastrada" 
+              description="Defina suas metas de curto, médio ou longo prazo e acompanhe a evolução de seus objetivos."
+              icon={<Trophy className="w-8 h-8 opacity-40 text-[#8b5cf6]" />}
+            />
           </div>
         )}
       </div>

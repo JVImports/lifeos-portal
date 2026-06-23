@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useLifeOS } from "@/context/lifeos-context";
 import { CheckCircle2, ChevronRight, AlertTriangle, ArrowRight, Sparkles, BrainCircuit } from "lucide-react";
 import Link from "next/link";
+import { useToast } from "@/components/ui/toast";
 
 export default function RevisaoDiaria() {
   const { tasks, onboardingAnswers, completeDailyReview } = useLifeOS();
@@ -22,6 +23,8 @@ export default function RevisaoDiaria() {
 
   const [reviewCompleted, setReviewCompleted] = useState(false);
 
+  const { showToast } = useToast();
+
   const handleSelectReason = (taskId: number, reason: string) => {
     setReasons((prev) => ({ ...prev, [taskId]: reason }));
   };
@@ -31,7 +34,7 @@ export default function RevisaoDiaria() {
       // Validate all pending tasks have reasons selected
       const allSelected = pendingTasks.every((t) => reasons[t.id]);
       if (!allSelected && pendingTasks.length > 0) {
-        alert("Por favor, selecione um motivo para cada tarefa pendente.");
+        showToast("Por favor, selecione um motivo para cada tarefa pendente.", "error");
         return;
       }
       setStep(2);

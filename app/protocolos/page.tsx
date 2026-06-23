@@ -1,10 +1,13 @@
 "use client";
 
 import { useLifeOS } from "@/context/lifeos-context";
-import { Compass, CheckCircle2, Info } from "lucide-react";
+import { Compass, CheckCircle2, Play, AlertCircle, Info, Calendar } from "lucide-react";
+import PageHeader from "@/components/ui/page-header";
+import { useToast } from "@/components/ui/toast";
 
 export default function Protocolos() {
   const { activeProtocol, activateProtocol, deactivateProtocol } = useLifeOS();
+  const { showToast } = useToast();
 
   const protocolsList = [
     {
@@ -39,18 +42,25 @@ export default function Protocolos() {
     }
   ];
 
+  const handleActivate = (id: string) => {
+    activateProtocol(id);
+    showToast("Protocolo ativado com sucesso! 🎯", "success");
+  };
+
+  const handleDeactivate = () => {
+    deactivateProtocol();
+    showToast("Protocolo encerrado.", "info");
+  };
+
   return (
     <main className="p-6 md:p-10 min-h-screen">
-      <header className="mb-8">
-        <h1 className="text-3xl font-bold text-on-surface flex items-center gap-3">
-          <Compass className="text-[#8c909f] w-8 h-8" />
-          Protocolos de Evolução
-        </h1>
-        <p className="text-sm opacity-60 mt-1">Ative trilhas e rotinas de múltiplos dias geradas e monitoradas pela IA</p>
-      </header>
+      <PageHeader
+        title="Protocolos de Evolução"
+        description="Ative trilhas e rotinas de múltiplos dias geradas e monitoradas pela IA"
+      />
 
       {activeProtocol && (
-        <div className="glass-card p-5 rounded-2xl mb-8 border border-[#4edea3]/20 bg-[#4edea3]/5 flex items-center gap-4">
+        <div className="glass-card p-5 rounded-2xl mb-8 border border-[#4edea3]/20 bg-[#4edea3]/5 flex items-center gap-4 animate-fade-in">
           <div className="w-10 h-10 rounded-xl bg-[#4edea3]/20 flex items-center justify-center border border-[#4edea3]/30 shrink-0">
             <CheckCircle2 className="text-[#4edea3] w-5 h-5" />
           </div>
@@ -61,7 +71,7 @@ export default function Protocolos() {
             </p>
           </div>
           <button 
-            onClick={deactivateProtocol}
+            onClick={handleDeactivate}
             className="px-4 py-2 bg-error/10 hover:bg-error/20 text-error text-xs font-bold rounded-xl border border-error/20 transition-all"
           >
             Finalizar Protocolo
@@ -76,8 +86,8 @@ export default function Protocolos() {
           return (
             <div 
               key={p.id}
-              className={`glass-card rounded-3xl p-6 border flex flex-col gap-5 ${
-                isCurrent ? "border-primary bg-primary/5 shadow-lg shadow-primary/5" : "border-white/5"
+              className={`glass-card rounded-3xl p-6 border flex flex-col gap-5 transition-all duration-300 ${
+                isCurrent ? "border-primary bg-primary/5 shadow-lg shadow-primary/5 scale-[1.01]" : "border-white/5"
               }`}
             >
               <div className="flex justify-between items-start">
@@ -119,7 +129,7 @@ export default function Protocolos() {
 
               <button
                 disabled={!!activeProtocol && !isCurrent}
-                onClick={() => isCurrent ? deactivateProtocol() : activateProtocol(p.id)}
+                onClick={() => isCurrent ? handleDeactivate() : handleActivate(p.id)}
                 className={`w-full py-3 rounded-xl text-xs font-bold transition-all mt-auto flex items-center justify-center gap-2 ${
                   isCurrent 
                     ? "bg-error/15 text-error border border-error/20 hover:bg-error/25"
